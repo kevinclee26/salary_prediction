@@ -1,19 +1,22 @@
 from flask import Flask, jsonify
 from flask import request
 import pickle
+from sklearn.ensemble import RandomForestRegressor
+
+# load the previously persisted ML assets
+with open('model/final_model.sav', 'rb') as f: 
+	rfr=pickle.load(f)
+with open('model/input_columns.sav', 'rb') as f: 
+	input_columns=pickle.load(f)
+with open('model/input_scaler.sav', 'rb') as f: 
+	scaler=pickle.load(f)
 
 # app=Flask(__name__)
 app=Flask(__name__)
 
-# load trained classifier
-clf_path='lib/models/SentimentClassifier.pkl'
-with open(clf_path, 'rb') as f:
-    model=pickle.load(f)
-
 @app.route('/')
 def index(): 
 	return 'Welcome'
-
 
 @app.route('/sample/')
 def sample():
@@ -28,6 +31,23 @@ def sample():
 # 	output='machine_learning_model_output'
 # 	return jsonify({'Inputs': query_string, 'Results': output})
 # 	# return jsonify(output)
+
+@app.route('/test/')
+def test(): 
+	# inputs={'YearsCodePro': 10, 'Data scientist or machine learning specialist': 1, 'Windows': 1}
+	# inputs={'YearsCodePro': 10, 
+	#        'Data scientist or machine learning specialist': 1, 
+	#        'MacOS': 1, 
+	#        'Other doctoral degree (Ph.D., Ed.D., etc.)': 1}
+	inputs={'YearsCodePro': request.args.get('yearscodepro', 0), 
+			'Windows': request.args.get('windows', 0), 
+			'Data scientist or machine learning specialist': request.args.get('data_scientist', 0), 
+			'Other doctoral degree (Ph.D., Ed.D., etc.)': request.args.get('doctoral', 0)}
+	input_ary=[inputs[each_feature] if (each_feature in inputs) else 0 for each_feature in input_columns]
+	input_scaled=scaler.transform([input_ary])
+	# # prediction=rfr.predict(input_scaled)
+	# return jsonify(rfr.predict(input_scaled)[0])
+	return jsonify({'inputs': inputs, 'output': rfr.predict(input_scaled)[0]})
 
 # this method takes + as space
 # this method separates with &
@@ -49,5 +69,15 @@ def predict():
 	return jsonify(query_params)
 
 
+
+
 if __name__=='__main__': 
 	app.run()
+
+
+	# 'Data scientist or machine learning specialist': request.args.get('Data scientist or machine learning specialist', ''), 
+			# 'Other doctoral degree (Ph.D., Ed.D., etc.)': request.args.get('Other doctoral degree (Ph.D., Ed.D., etc.)', '')}
+			# input_ary=[inputs[each_feature] if (each_feature in inputs) else 0 for each_feature in input_columns]
+			# input_scaled=scaler.transform([input_ary])
+			# # prediction=rfr.predict(input_scaled)
+			# return jsonify(rfr.predict(input_scaled)[0])
