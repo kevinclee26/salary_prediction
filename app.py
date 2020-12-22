@@ -1,4 +1,5 @@
 from flask import Flask, jsonify
+import json
 from flask import request
 import pickle
 from sklearn.ensemble import RandomForestRegressor
@@ -10,20 +11,26 @@ with open('model/input_columns.sav', 'rb') as f:
 	input_columns=pickle.load(f)
 with open('model/input_scaler.sav', 'rb') as f: 
 	scaler=pickle.load(f)
+with open('model/input_dictionary.json', 'r') as f: 
+    input_dictionary=json.load(f)
+    column_dict={}
+    for key in input_dictionary.keys(): 
+    	if input_dictionary[key]['type']=='categorical': 
+    		column_dict.update(input_dictionary[key]['options'])
 
-# app=Flask(__name__)
 app=Flask(__name__)
 
 @app.route('/')
 def index(): 
-	welcome_message='<h3>Welcome to Salary Prediction</h3><h4>Please use the /predict route</h4><h4>Below are some query parameters:</h4>'
-	query_parameters='''
-					'YearsCodePro': 
-
-					'''
-	print(input_columns)
+	welcome_message='<h1>Welcome to Salary Predictor</h1><h3>Use the /salary route. Below are the query parameters:</h3>'
+	query_params='<img src="static/image/sample.png" alt="sample"><hr>'
+	for each_key in input_dictionary.keys(): 
+		query_params+=f'<p><b>{each_key}</b> - {input_dictionary[each_key]["definition"]}</p>'
+		if input_dictionary[each_key]['type']=='categorical': 
+			for input_str, feature in input_dictionary[each_key]['options'].items(): 
+				query_params+=f'<li><b>{input_str}</b> - {feature}</li>'
 	# return welcome_message
-	return jsonify(list(input_columns))
+	return welcome_message+query_params
 
 @app.route('/sample/')
 def sample():
@@ -37,25 +44,19 @@ def sample():
 # def predict(query_string): 
 # 	output='machine_learning_model_output'
 # 	return jsonify({'Inputs': query_string, 'Results': output})
-# 	# return jsonify(output)
 
-@app.route('/test/')
-def test(): 
-	# inputs={'YearsCodePro': 10, 'Data scientist or machine learning specialist': 1, 'Windows': 1}
-	# inputs={'YearsCodePro': 10, 
-	#        'Data scientist or machine learning specialist': 1, 
-	#        'MacOS': 1, 
-	#        'Other doctoral degree (Ph.D., Ed.D., etc.)': 1}
-	inputs={'YearsCodePro': request.args.get('YearsCodePro', 0), 
-			'Windows': request.args.get('Windows', 0), 
-			'Data scientist or machine learning specialist': request.args.get('Data_Scientist', 0), 
-			'Other doctoral degree (Ph.D., Ed.D., etc.)': request.args.get('Doctoral', 0)}
+@app.route('/salary')
+@app.route('/salary/')
+def salary(): 
+	inputs={'YearsCodePro': request.args.get('YearsCodePro', 0)}
+	cat_inputs={'OpSys': request.args.get('OpSys'), 
+			'EdLevel': request.args.get('EdLevel'), 
+			'DevType': request.args.get('DevType')}
+	inputs.update({column_dict[name]: 1 for name in cat_inputs.values() if name in column_dict.keys()})
 	input_ary=[inputs[each_feature] if (each_feature in inputs) else 0 for each_feature in input_columns]
 	input_scaled=scaler.transform([input_ary])
 	# prediction=rfr.predict(input_scaled)
-	# return jsonify(rfr.predict(input_scaled)[0])
-	return jsonify({'inputs': inputs, 'output': rfr.predict(input_scaled)[0]})
-	# return jsonify(input_ary)
+	return jsonify({'input(s)': inputs, 'output': rfr.predict(input_scaled)[0]})
 
 # this method takes + as space
 # this method separates with &
@@ -76,16 +77,5 @@ def predict():
 	# return jsonify(return_dict)
 	return jsonify(query_params)
 
-
-
-
 if __name__=='__main__': 
 	app.run()
-
-
-	# 'Data scientist or machine learning specialist': request.args.get('Data scientist or machine learning specialist', ''), 
-			# 'Other doctoral degree (Ph.D., Ed.D., etc.)': request.args.get('Other doctoral degree (Ph.D., Ed.D., etc.)', '')}
-			# input_ary=[inputs[each_feature] if (each_feature in inputs) else 0 for each_feature in input_columns]
-			# input_scaled=scaler.transform([input_ary])
-			# # prediction=rfr.predict(input_scaled)
-			# return jsonify(rfr.predict(input_scaled)[0])

@@ -1,0 +1,62 @@
+{
+	"YearsCodePro": {
+		"type": "numerical", 
+		"definition": "NOT including education, how many years have you coded professionally (as a part of your work)?"
+	}, 
+	"DevType": {
+		"type": "categorical", 
+		"definition": "Which of the following describe you?", 
+		"options": {
+			"researcher": "Academic researcher", 
+			"analyst": "Data or business analyst", 
+			"data_scientist": "Data scientist or machine learning specialist", 
+			"machine_learning_specialist": "Data scientist or machine learning specialist", 
+			"database_admin": "Database administrator", 
+			"designer": "Designer", 
+			"devops": "DevOps specialist", 
+			"dev_qa": "Developer, QA or test", 
+			"dev_backend": "Developer, back-end", 
+			"dev_desktop": "Developer, desktop or enterprise applications", 
+			"dev_embedded": "Developer, embedded applications or devices", 
+			"dev_frontend": "Developer, front-end", 
+			"dev_fullstack": "Developer, full-stack", 
+			"dev_game": "Developer, game or graphics", 
+			"dev_mobile": "Developer, mobile", 
+			"educator": "Educator", 
+			"data_engineer": "Engineer, data", 
+			"site_reliability_engineer": "Engineer, site reliability", 
+			"engineering_manager": "Engineering manager", 
+			"marketing": "Marketing or sales professional", 
+			"sales": "Marketing or sales professional", 
+			"product_manager": "Product manager", 
+			"scientist": "Scientist", 
+			"senior_executive": "Senior executive/VP", 
+			"system_admin": "System administrator"
+		}
+	}, 
+	"EdLevel": {
+		"type": "categorical", 
+		"definition": "Which of the following best describes the highest level of formal education that you\u2019ve completed?", 
+		"options": {
+			"associate": "Associate degree (A.A., A.S., etc.)", 
+			"bachelors": "Bachelor\u2019s degree (B.A., B.S., B.Eng., etc.)", 
+			"none": "I never completed any formal education", 
+			"masters": "Master\u2019s degree (M.A., M.S., M.Eng., MBA, etc.)", 
+			"doctoral": "Other doctoral degree (Ph.D., Ed.D., etc.)", 
+			"primary": "Primary\/elementary school", 
+			"professional": "Professional degree (JD, MD, etc.)", 
+			"secondary": "Secondary school (e.g. American high school, German Realschule or Gymnasium, etc.)", 
+			"some": "Some college\/university study without earning a degree"
+		}
+	}, 
+	"OpSys": {
+		"type": "categorical", 
+		"definition": "What is the primary operating system in which you work?", 
+		"options": {
+			"bsd": "BSD", 
+			"linux": "Linux-based", 
+			"macos": "MacOS", 
+			"windows": "Windows"
+		}
+	}
+}
