@@ -16,7 +16,14 @@ app=Flask(__name__)
 
 @app.route('/')
 def index(): 
-	return 'Welcome'
+	welcome_message='<h3>Welcome to Salary Prediction</h3><h4>Please use the /predict route</h4><h4>Below are some query parameters:</h4>'
+	query_parameters='''
+					'YearsCodePro': 
+
+					'''
+	print(input_columns)
+	# return welcome_message
+	return jsonify(list(input_columns))
 
 @app.route('/sample/')
 def sample():
@@ -39,15 +46,16 @@ def test():
 	#        'Data scientist or machine learning specialist': 1, 
 	#        'MacOS': 1, 
 	#        'Other doctoral degree (Ph.D., Ed.D., etc.)': 1}
-	inputs={'YearsCodePro': request.args.get('yearscodepro', 0), 
-			'Windows': request.args.get('windows', 0), 
-			'Data scientist or machine learning specialist': request.args.get('data_scientist', 0), 
-			'Other doctoral degree (Ph.D., Ed.D., etc.)': request.args.get('doctoral', 0)}
+	inputs={'YearsCodePro': request.args.get('YearsCodePro', 0), 
+			'Windows': request.args.get('Windows', 0), 
+			'Data scientist or machine learning specialist': request.args.get('Data_Scientist', 0), 
+			'Other doctoral degree (Ph.D., Ed.D., etc.)': request.args.get('Doctoral', 0)}
 	input_ary=[inputs[each_feature] if (each_feature in inputs) else 0 for each_feature in input_columns]
 	input_scaled=scaler.transform([input_ary])
-	# # prediction=rfr.predict(input_scaled)
+	# prediction=rfr.predict(input_scaled)
 	# return jsonify(rfr.predict(input_scaled)[0])
 	return jsonify({'inputs': inputs, 'output': rfr.predict(input_scaled)[0]})
+	# return jsonify(input_ary)
 
 # this method takes + as space
 # this method separates with &
