@@ -1,8 +1,6 @@
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
 import json
-from flask import request
 import pickle
-from sklearn.ensemble import RandomForestRegressor
 
 # load the previously persisted ML assets
 with open('model/final_model.sav', 'rb') as f: 
@@ -32,9 +30,17 @@ def index():
 	# return welcome_message
 	return welcome_message+query_params
 
+@app.route('/sample')
 @app.route('/sample/')
-def sample():
-    return jsonify({'title': 'data scientist', 'city': 'san francisco'})
+def sample(): 
+	inputs={'YearsCodePro': 10, 
+			'Bachelor’s degree (B.A., B.S., B.Eng., etc.)': 1,
+			'Data scientist or machine learning specialist': 1, 
+			'MacOS': 1}
+	input_ary=[inputs[each_feature] if (each_feature in inputs) else 0 for each_feature in input_columns]
+	input_scaled=scaler.transform([input_ary])
+	# prediction=rfr.predict(input_scaled)
+	return jsonify({'input(s)': inputs, 'output': round(rfr.predict(input_scaled)[0], 2)})
 
 # this method takes + as literal
 # this method handles &
@@ -45,9 +51,25 @@ def sample():
 # 	output='machine_learning_model_output'
 # 	return jsonify({'Inputs': query_string, 'Results': output})
 
-@app.route('/salary')
-@app.route('/salary/')
-def salary(): 
+# this method takes + as space
+# this method separates with &
+# this path doesn't handle & symbol well
+# @app.route('/predict')
+# @app.route('/predict/')
+# def predict(): 
+# 	output='machine_learning_model_output'
+# 	# use flat=False to return as list - enables multiple values to same param
+# 	query_params=request.args.to_dict()
+# 	return_dict={
+# 		# 'Inputs': request.args.get('input', ''), 
+# 		'Result': output
+# 	}
+# 	query_params['results']=output
+# 	return jsonify(return_dict)
+
+@app.route('/predict')
+@app.route('/predict/')
+def predict(): 
 	inputs={'YearsCodePro': request.args.get('YearsCodePro', 0)}
 	cat_inputs={'OpSys': request.args.get('OpSys'), 
 			'EdLevel': request.args.get('EdLevel'), 
@@ -56,26 +78,7 @@ def salary():
 	input_ary=[inputs[each_feature] if (each_feature in inputs) else 0 for each_feature in input_columns]
 	input_scaled=scaler.transform([input_ary])
 	# prediction=rfr.predict(input_scaled)
-	return jsonify({'input(s)': inputs, 'output': rfr.predict(input_scaled)[0]})
-
-# this method takes + as space
-# this method separates with &
-# this path doesn't handle & symbol well
-@app.route('/predict')
-@app.route('/predict/')
-def predict(): 
-	output='machine_learning_model_output'
-	# use flat=False to return as list - enables multiple values to same param
-	query_params=request.args.to_dict()
-	# return_dict={
-	# 	# 'Inputs': request.args.get('input', ''), 
-	# 	'Result': output
-	# }
-	query_params['results']=output
-	# return jsonify({'Inputs': query_string, 'Results': output})
-	# return jsonify(request.args.get('input'))
-	# return jsonify(return_dict)
-	return jsonify(query_params)
+	return jsonify({'input(s)': inputs, 'output': round(rfr.predict(input_scaled)[0], 2)})
 
 if __name__=='__main__': 
 	app.run()
