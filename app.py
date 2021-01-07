@@ -3,13 +3,13 @@ import json
 import pickle
 
 # load the previously persisted ML assets
-with open('model/final_model.sav', 'rb') as f: 
+with open('assets/model/final_model.sav', 'rb') as f: 
 	rfr=pickle.load(f)
-with open('model/input_columns.sav', 'rb') as f: 
+with open('assets/model/input_columns.sav', 'rb') as f: 
 	input_columns=pickle.load(f)
-with open('model/input_scaler.sav', 'rb') as f: 
+with open('assets/model/input_scaler.sav', 'rb') as f: 
 	scaler=pickle.load(f)
-with open('model/input_dictionary.json', 'r') as f: 
+with open('assets/model/input_dictionary.json', 'r') as f: 
     input_dictionary=json.load(f)
     column_dict={}
     for key in input_dictionary.keys(): 
@@ -30,8 +30,8 @@ def index():
 	# return welcome_message
 	return welcome_message+query_params
 
-@app.route('/sample')
 @app.route('/sample/')
+@app.route('/sample')
 def sample(): 
 	inputs={'YearsCodePro': 10, 
 			'Bachelor’s degree (B.A., B.S., B.Eng., etc.)': 1,
@@ -67,8 +67,8 @@ def sample():
 # 	query_params['results']=output
 # 	return jsonify(return_dict)
 
-@app.route('/predict')
 @app.route('/predict/')
+@app.route('/predict')
 def predict(): 
 	inputs={'YearsCodePro': request.args.get('YearsCodePro', 0)}
 	cat_inputs={'OpSys': request.args.get('OpSys'), 
